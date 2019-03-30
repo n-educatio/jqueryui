@@ -9760,9 +9760,10 @@ $.widget( "ui.draggable", $.ui.mouse, {
 	_mouseDrag: function( event, noPropagation ) {
 
 		// reset any necessary cached properties (see #5009)
-		if ( this.hasFixedAncestor ) {
-			this.offset.parent = this._getParentOffset();
-		}
+		// if ( this.hasFixedAncestor ) {
+		// 	this.offset.parent = this._getParentOffset();
+		// }
+		this.offset.parent = this._getParentOffset();
 
 		//Compute the helpers position
 		this.position = this._generatePosition( event, true );
