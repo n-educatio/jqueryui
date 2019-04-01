@@ -191,6 +191,24 @@ $.widget( "ui.draggable", $.ui.mouse, {
 				return $( this ).css( "position" ) === "fixed";
 			} ).length > 0;
 
+		//Prevent changing scroll state in scrollParent when helper is attached to dom (and potentially can modify container width)
+		this.helper.hide();
+		var shouldSetOverflow = false;
+		var overflowToRestore = '';
+		var currentOverflow = this.scrollParent.css('overflow');
+		var currentOverflowY = this.scrollParent.css('overflow-y');
+		var isAnyAuto = currentOverflow === 'auto' || currentOverflowY === 'auto';
+		var isAnyScroll = currentOverflow === 'scroll' || currentOverflowY === 'scroll';
+		var shouldBeScrolled = this.scrollParent.get(0).scrollHeight > this.scrollParent.get(0).clientHeight;
+		if (isAnyAuto && !isAnyScroll && !shouldBeScrolled) {
+			shouldSetOverflow = true;
+			if (this.scrollParent.attr('style').indexOf('overflow:') > -1) {
+				overflowToRestore = currentOverflow;
+			}
+			this.scrollParent.css('overflow', 'hidden');
+		}
+		this.helper.show();
+
 		//The element's absolute position on the page minus margins
 		this.positionAbs = this.element.offset();
 		this._refreshOffsets( event );
@@ -205,6 +223,11 @@ $.widget( "ui.draggable", $.ui.mouse, {
 
 		//Set a containment if given in the options
 		this._setContainment();
+
+		//Restore original overflow
+		if (shouldSetOverflow) {
+			this.scrollParent.css('overflow', overflowToRestore);
+		}
 
 		//Trigger event + callbacks
 		if ( this._trigger( "start", event ) === false ) {
