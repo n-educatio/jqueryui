@@ -9733,11 +9733,6 @@ $.widget( "ui.draggable", $.ui.mouse, {
 		//Set a containment if given in the options
 		this._setContainment();
 
-		//Restore original overflow
-		if (shouldSetOverflow) {
-			this.scrollParent.css('overflow', overflowToRestore);
-		}
-
 		//Trigger event + callbacks
 		if ( this._trigger( "start", event ) === false ) {
 			this._clear();
@@ -9760,6 +9755,11 @@ $.widget( "ui.draggable", $.ui.mouse, {
 		// (see #5003)
 		if ( $.ui.ddmanager ) {
 			$.ui.ddmanager.dragStart( this, event );
+		}
+
+		//Restore original overflow
+		if (shouldSetOverflow) {
+			this.scrollParent.css('overflow', overflowToRestore);
 		}
 
 		return true;
