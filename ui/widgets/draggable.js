@@ -193,19 +193,20 @@ $.widget( "ui.draggable", $.ui.mouse, {
 
 		//Prevent changing scroll state in scrollParent when helper is attached to dom (and potentially can modify container width)
 		this.helper.hide();
+		this.overflowScrollParent = this.scrollParent.is(this.helper[0].ownerDocument) ? $(this.helper[0].ownerDocument.body) : this.scrollParent;
 		var shouldSetOverflow = false;
 		var overflowToRestore = '';
-		var currentOverflow = this.scrollParent.css('overflow');
-		var currentOverflowY = this.scrollParent.css('overflow-y');
+		var currentOverflow = this.overflowScrollParent.css('overflow');
+		var currentOverflowY = this.overflowScrollParent.css('overflow-y');
 		var isAnyAuto = currentOverflow === 'auto' || currentOverflowY === 'auto';
 		var isAnyScroll = currentOverflow === 'scroll' || currentOverflowY === 'scroll';
-		var shouldBeScrolled = this.scrollParent.get(0).scrollHeight > this.scrollParent.get(0).clientHeight;
+		var shouldBeScrolled = this.overflowScrollParent.get(0).scrollHeight > this.overflowScrollParent.get(0).clientHeight;
 		if (isAnyAuto && !isAnyScroll && !shouldBeScrolled) {
 			shouldSetOverflow = true;
-			if (this.scrollParent.attr('style').indexOf('overflow:') > -1) {
+			if (this.overflowScrollParent.attr('style').indexOf('overflow:') > -1) {
 				overflowToRestore = currentOverflow;
 			}
-			this.scrollParent.css('overflow', 'hidden');
+			this.overflowScrollParent.css('overflow', 'hidden');
 		}
 		this.helper.show();
 
@@ -250,7 +251,7 @@ $.widget( "ui.draggable", $.ui.mouse, {
 
 		//Restore original overflow
 		if (shouldSetOverflow) {
-			this.scrollParent.css('overflow', overflowToRestore);
+			this.overflowScrollParent.css('overflow', overflowToRestore);
 		}
 
 		return true;
